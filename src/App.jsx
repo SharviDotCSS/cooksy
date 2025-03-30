@@ -3,10 +3,11 @@ import Home from "./pages/Home";
 import AddRecipe from "./pages/AddRecipe";
 import SearchRecipe from "./pages/SearchRecipe";
 import Login from "./pages/Login";
-import Signin from "./pages/Signin";
+import Signin from "./pages/Signup";
 import UserDashboard from "./pages/UserDashboard";
 import Admin from "./pages/Admin";
 import RecipeInfo from "./pages/RecipeInfo";
+import Signup from "./pages/Signup";
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
         <Route path="/dashboard" element={<UserDashboard />} />
         <Route path="/admin" element={<Admin />} />
         <Route path="/recipe/:id" element={<RecipeInfo />} />
+        <Route path="/register" element={<Signup />} />
       </Routes>
     </Router>
   );
