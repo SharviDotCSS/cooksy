@@ -1,8 +1,24 @@
-import React from "react";
-import { Link } from "react-router-dom";
-import { Home, Bookmark, PlusCircle, User, Utensils, LogIn } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { Home, PlusCircle, User, LogIn, LogOut } from "lucide-react";
 
 const Sidebar = () => {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    // Check if a token exists in localStorage to determine login status
+    const token = localStorage.getItem("token");
+    setIsLoggedIn(!!token);
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem("token"); // Remove the JWT token
+    localStorage.removeItem("userId"); // Remove User ID
+    setIsLoggedIn(false);
+    navigate("/"); // Redirect to login page
+  };
+
   return (
     <div className="w-64 h-screen bg-green-700 text-white p-6 flex flex-col justify-between">
       {/* Top Section */}
@@ -15,26 +31,26 @@ const Sidebar = () => {
           <Link to="/add-recipe" className="flex items-center gap-2 hover:bg-green-600 p-2 rounded-lg">
             <PlusCircle size={20} /> Add Recipe
           </Link>
-          {/* <Link to="/saved-recipes" className="flex items-center gap-2 hover:bg-green-600 p-2 rounded-lg">
-            <Bookmark size={20} /> Saved Recipes
-          </Link>
-          <Link to="/my-recipes" className="flex items-center gap-2 hover:bg-green-600 p-2 rounded-lg">
-            <Utensils size={20} /> My Recipes
-          </Link> */}
           <Link to="/dashboard" className="flex items-center gap-2 hover:bg-green-600 p-2 rounded-lg">
             <User size={20} /> Profile
           </Link>
         </nav>
       </div>
 
-      {/* Bottom Section (Login Button) */}
+      {/* Bottom Section (Login/Logout Button) */}
       <div className="mt-auto">
-        <Link
-          to="/login"
-          className="flex items-center gap-2 hover:bg-green-600 p-2 rounded-lg"
-        >
-          <LogIn size={20} /> Login
-        </Link>
+        {isLoggedIn ? (
+          <button
+            onClick={handleLogout}
+            className="flex items-center gap-2 hover:bg-green-600 p-2 rounded-lg w-full"
+          >
+            <LogOut size={20} /> Logout
+          </button>
+        ) : (
+          <Link to="/login" className="flex items-center gap-2 hover:bg-green-600 p-2 rounded-lg">
+            <LogIn size={20} /> Login
+          </Link>
+        )}
       </div>
     </div>
   );
