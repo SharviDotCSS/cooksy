@@ -20,7 +20,7 @@ const FeedbackForm = ({ recipeId }) => {
 
         // Check if the user has already reviewed the recipe
         const checkExistingReview = async () => {
-            if (!user) return; // Avoid API call if user is not found
+            if (!user) return;
 
             try {
                 const { data } = await axios.get(`http://localhost:3000/api/reviews/${recipeId}`);
@@ -38,7 +38,7 @@ const FeedbackForm = ({ recipeId }) => {
     }, [recipeId, user]);
 
     const handleSubmit = async () => {
-        const authToken = localStorage.getItem("token"); // Use "token" instead of "authToken"
+        const authToken = localStorage.getItem("token"); 
     
         if (!authToken) {
             setError("You must be logged in to submit feedback.");

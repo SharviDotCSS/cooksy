@@ -2,12 +2,13 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Sidebar from "../components/Sidebar";
 import RecipeCard from "../components/RecipeCard";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const UserDashboard = () => {
   const [uploadedRecipes, setUploadedRecipes] = useState([]);
   const [savedRecipes, setSavedRecipes] = useState([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate(); 
 
   const token = localStorage.getItem("token");
   const userId = localStorage.getItem("userId");
@@ -31,7 +32,6 @@ const UserDashboard = () => {
     const fetchUploadedRecipes = async () => {
       try {
         const response = await axios.get("http://localhost:3000/api/recipes");
-
         const formattedRecipes = response.data.map((recipe) => ({
           _id: recipe._id,
           img: recipe.image,
@@ -42,8 +42,8 @@ const UserDashboard = () => {
             typeof recipe.tag === "string"
               ? recipe.tag.split(",").map((t) => t.trim())
               : Array.isArray(recipe.tag)
-              ? recipe.tag
-              : [],
+                ? recipe.tag
+                : [],
           rating: recipe.rating ?? "N/A",
           description: recipe.description ?? "No description available.",
           prepTime:
@@ -98,8 +98,8 @@ const UserDashboard = () => {
               typeof fav.recipe.tag === "string"
                 ? fav.recipe.tag.split(",").map((t) => t.trim())
                 : Array.isArray(fav.recipe.tag)
-                ? fav.recipe.tag
-                : [],
+                  ? fav.recipe.tag
+                  : [],
             rating: fav.recipe.rating ?? "N/A",
             description: fav.recipe.description ?? "No description available.",
             prepTime:
@@ -127,6 +127,23 @@ const UserDashboard = () => {
     fetchSavedRecipes();
   }, [token]);
 
+  // Handle Delete Recipe
+  const handleDelete = async (recipeId) => {
+    const confirmDelete = window.confirm("Are you sure you want to delete this recipe?");
+    if (!confirmDelete) return;
+
+    try {
+      await axios.delete(`http://localhost:3000/api/recipes/${recipeId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      setUploadedRecipes(uploadedRecipes.filter(recipe => recipe._id !== recipeId));
+      alert("Recipe deleted successfully!");
+    } catch (error) {
+      console.error("Error deleting recipe:", error.response?.data || error.message);
+    }
+  };
+
   return (
     <div className="flex min-h-screen bg-gray-100">
       <Sidebar />
@@ -144,9 +161,25 @@ const UserDashboard = () => {
               <p>Loading...</p>
             ) : uploadedRecipes.length > 0 ? (
               uploadedRecipes.map((recipe) => (
-                <Link to={`/recipe/${recipe._id}`} state={{ recipe }} key={recipe._id}>
-                  <RecipeCard recipe={recipe} />
-                </Link>
+                <div key={recipe._id} className="relative border p-4 rounded-lg shadow bg-white">
+                  <Link to={`/recipe/${recipe._id}`} state={{ recipe }}>
+                    <RecipeCard recipe={recipe} />
+                  </Link>
+                  <div className="mt-3 flex justify-between">
+                    <button
+                      onClick={() => navigate("/add-recipe", { state: { recipe } })}
+                      className="bg-blue-500 text-white px-4 py-1 rounded-md hover:bg-blue-600 transition"
+                    >
+                      Update
+                    </button>
+                    <button
+                      onClick={() => handleDelete(recipe._id)}
+                      className="bg-red-500 text-white px-4 py-1 rounded-md hover:bg-red-600 transition"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </div>
               ))
             ) : (
               <p className="text-gray-500">You haven't uploaded any recipes yet.</p>
@@ -175,105 +208,3 @@ const UserDashboard = () => {
 };
 
 export default UserDashboard;
-
-
-
-
-
-
-
-// Static
-// import React from "react";
-// import { Bookmark, PlusCircle, Home, User, LogOut } from "lucide-react";
-// import Sidebar from "../components/Sidebar";
-// import RecipeCard from "../components/RecipeCard";
-
-// const uploadedRecipes = [
-//   {
-//     id: 1,
-//     title: "Spaghetti Carbonara",
-//     img: "https://images.pexels.com/photos/769969/pexels-photo-769969.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
-//     author: "Chef Alex",
-//     tags: ["Italian", "Pasta"],
-//     rating: 4.8,
-//   },
-//   {
-//     id: 2,
-//     title: "Classic Pancakes",
-//     img: "https://images.pexels.com/photos/376464/pexels-photo-376464.jpeg?auto=compress&cs=tinysrgb&w=600",
-//     author: "Sarah's Kitchen",
-//     tags: ["Breakfast", "Sweet"],
-//     rating: 4.7,
-//   },
-// ];
-
-// const savedRecipes = [
-//   {
-//     id: 3,
-//     title: "Spaghetti Carbonara",
-//     img: "https://images.pexels.com/photos/4057736/pexels-photo-4057736.jpeg?auto=compress&cs=tinysrgb&w=600&lazy=load",
-//     author: "Chef Alex",
-//     tags: ["Italian", "Pasta"],
-//     rating: 4.8,
-//   },
-//   {
-//     id: 4,
-//     title: "Classic Pancakes",
-//     img: "https://images.pexels.com/photos/2113556/pexels-photo-2113556.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
-//     author: "Sarah's Kitchen",
-//     tags: ["Breakfast", "Sweet"],
-//     rating: 4.7,
-//   },
-// ];
-
-// const UserDashboard = () => {
-//   return (
-//     <div className="flex min-h-screen bg-gray-100">
-//       <Sidebar /> 
-//       <main className="flex-1 h-screen overflow-y-auto bg-gray-100 p-6">
-//         <div className="bg-[url('https://source.unsplash.com/300x200/?pancakes">
-//           <h1 className="text-3xl font-bold">Welcome!</h1>
-//           <p className="text-lg mt-2">Manage your recipes and saved collections.</p>
-//         </div>
-//         <section className="mt-10">
-//           <h2 className="text-2xl font-semibold text-gray-800 mb-4">My Recipes</h2>
-//           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-//             {uploadedRecipes.length > 0 ? (
-//               uploadedRecipes.map((recipe) => <RecipeCard key={recipe.id} recipe={recipe} />)
-//             ) : (
-//               <p className="text-gray-500">You haven't uploaded any recipes yet.</p>
-//             )}
-//           </div>
-//         </section>
-//         <section className="mt-10">
-//           <h2 className="text-2xl font-semibold text-gray-800 mb-4">Saved Recipes</h2>
-//           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-//             {savedRecipes.length > 0 ? (
-//               savedRecipes.map((recipe) => <RecipeCard key={recipe.id} recipe={recipe} />)
-//             ) : (
-//               <p className="text-gray-500">No saved recipes yet.</p>
-//             )}
-//           </div>
-//         </section>
-//       </main>
-//     </div>
-//   );
-// };
-
-// // // Recipe Card Component
-// // const RecipeCard = ({ recipe }) => {
-// //   return (
-// //     <div className="bg-white rounded-lg shadow-lg overflow-hidden transition transform hover:scale-105">
-// //       <img src={recipe.img} alt={recipe.title} className="w-full h-40 object-cover" />
-// //       <div className="p-4">
-// //         <h3 className="text-lg font-semibold text-gray-800">{recipe.title}</h3>
-// //         <p className="text-yellow-500 font-semibold">⭐ {recipe.rating}</p>
-// //         <button className="mt-3 flex items-center gap-2 text-blue-500 hover:underline">
-// //           <Bookmark size={18} /> Save Recipe
-// //         </button>
-// //       </div>
-// //     </div>
-// //   );
-// // };
-
-// export default UserDashboard;

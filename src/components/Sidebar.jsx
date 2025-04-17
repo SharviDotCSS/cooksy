@@ -13,10 +13,10 @@ const Sidebar = () => {
   }, []);
 
   const handleLogout = () => {
-    localStorage.removeItem("token"); // Remove the JWT token
-    localStorage.removeItem("userId"); // Remove User ID
+    localStorage.removeItem("token"); 
+    localStorage.removeItem("userId"); 
     setIsLoggedIn(false);
-    navigate("/"); // Redirect to login page
+    navigate("/"); 
   };
 
   return (
