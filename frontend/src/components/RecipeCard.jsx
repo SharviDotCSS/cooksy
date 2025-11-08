@@ -4,6 +4,8 @@ import React, { useState } from "react";
 import axios from "axios";
 import { Star, Bookmark, BookmarkCheck } from "lucide-react";
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 const RecipeCard = ({ recipe = {} }) => {
   const [saved, setSaved] = useState(false);
 
@@ -17,7 +19,7 @@ const RecipeCard = ({ recipe = {} }) => {
 
     try {
       const response = await axios.post(
-        `http://localhost:3000/api/favorites/${recipe._id}`,
+        `${API_BASE_URL}/api/favorites/${recipe._id}`,
         {}, 
         { headers: { Authorization: `Bearer ${authToken}` } }
       );

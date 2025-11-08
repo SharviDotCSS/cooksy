@@ -4,6 +4,9 @@ import Sidebar from "../components/Sidebar";
 import RecipeCard from "../components/RecipeCard";
 import { Link, useNavigate } from "react-router-dom";
 
+const BASE_ROUTE = import.meta.env.VITE_BASE_ROUTE || "/";
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 const UserDashboard = () => {
   const [uploadedRecipes, setUploadedRecipes] = useState([]);
   const [savedRecipes, setSavedRecipes] = useState([]);
@@ -31,7 +34,7 @@ const UserDashboard = () => {
   useEffect(() => {
     const fetchUploadedRecipes = async () => {
       try {
-        const response = await axios.get("http://localhost:3000/api/recipes");
+        const response = await axios.get(`${API_BASE_URL}/api/recipes`);
         const formattedRecipes = response.data.map((recipe) => ({
           _id: recipe._id,
           img: recipe.image,
@@ -80,7 +83,7 @@ const UserDashboard = () => {
       }
 
       try {
-        const response = await axios.get("http://localhost:3000/api/favorites", {
+        const response = await axios.get(`${API_BASE_URL}/api/favorites`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -133,7 +136,7 @@ const UserDashboard = () => {
     if (!confirmDelete) return;
 
     try {
-      await axios.delete(`http://localhost:3000/api/recipes/${recipeId}`, {
+      await axios.delete(`${API_BASE_URL}/api/recipes/${recipeId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -162,12 +165,12 @@ const UserDashboard = () => {
             ) : uploadedRecipes.length > 0 ? (
               uploadedRecipes.map((recipe) => (
                 <div key={recipe._id} className="relative border p-4 rounded-lg shadow bg-white">
-                  <Link to={`/recipe/${recipe._id}`} state={{ recipe }}>
+                  <Link to={`${BASE_ROUTE}/recipe/${recipe._id}`} state={{ recipe }}>
                     <RecipeCard recipe={recipe} />
                   </Link>
                   <div className="mt-3 flex justify-between">
                     <button
-                      onClick={() => navigate("/add-recipe", { state: { recipe } })}
+                      onClick={() => navigate(`${BASE_ROUTE}/add-recipe`, { state: { recipe } })}
                       className="bg-blue-500 text-white px-4 py-1 rounded-md hover:bg-blue-600 transition"
                     >
                       Update
@@ -193,7 +196,7 @@ const UserDashboard = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
             {savedRecipes.length > 0 ? (
               savedRecipes.map((recipe) => (
-                <Link to={`/recipe/${recipe._id}`} state={{ recipe }} key={recipe._id}>
+                <Link to={`${BASE_ROUTE}/recipe/${recipe._id}`} state={{ recipe }} key={recipe._id}>
                   <RecipeCard recipe={recipe} />
                 </Link>
               ))

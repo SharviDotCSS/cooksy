@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Home, PlusCircle, User, LogIn, LogOut } from "lucide-react";
 
+const BASE_ROUTE = import.meta.env.VITE_BASE_ROUTE || "/";
+
 const Sidebar = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const navigate = useNavigate();
@@ -16,7 +18,7 @@ const Sidebar = () => {
     localStorage.removeItem("token"); 
     localStorage.removeItem("userId"); 
     setIsLoggedIn(false);
-    navigate("/"); 
+    navigate(`${BASE_ROUTE}`); 
   };
 
   return (
@@ -25,13 +27,13 @@ const Sidebar = () => {
       <div>
         <h2 className="text-2xl font-bold mb-6">Cooksy</h2>
         <nav className="flex flex-col space-y-4">
-          <Link to="/" className="flex items-center gap-2 hover:bg-green-600 p-2 rounded-lg">
+          <Link to={`${BASE_ROUTE}`} className="flex items-center gap-2 hover:bg-green-600 p-2 rounded-lg">
             <Home size={20} /> Home
           </Link>
-          <Link to="/add-recipe" className="flex items-center gap-2 hover:bg-green-600 p-2 rounded-lg">
+          <Link to={`${BASE_ROUTE}/add-recipe`} className="flex items-center gap-2 hover:bg-green-600 p-2 rounded-lg">
             <PlusCircle size={20} /> Add Recipe
           </Link>
-          <Link to="/dashboard" className="flex items-center gap-2 hover:bg-green-600 p-2 rounded-lg">
+          <Link to={`${BASE_ROUTE}/dashboard`} className="flex items-center gap-2 hover:bg-green-600 p-2 rounded-lg">
             <User size={20} /> Profile
           </Link>
         </nav>
@@ -47,7 +49,7 @@ const Sidebar = () => {
             <LogOut size={20} /> Logout
           </button>
         ) : (
-          <Link to="/login" className="flex items-center gap-2 hover:bg-green-600 p-2 rounded-lg">
+          <Link to={`${BASE_ROUTE}/login`} className="flex items-center gap-2 hover:bg-green-600 p-2 rounded-lg">
             <LogIn size={20} /> Login
           </Link>
         )}

@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { Star } from "lucide-react";
 import axios from "axios";
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 const FeedbackForm = ({ recipeId }) => {
     const [rating, setRating] = useState(0);
     const [feedback, setFeedback] = useState("");
@@ -23,7 +25,7 @@ const FeedbackForm = ({ recipeId }) => {
             if (!user) return;
 
             try {
-                const { data } = await axios.get(`http://localhost:3000/api/reviews/${recipeId}`);
+                const { data } = await axios.get(`${API_BASE_URL}/api/reviews/${recipeId}`);
                 console.log(data);
                 const userReview = data.find((review) => review.user._id === user._id);
                 if (userReview) {
@@ -50,7 +52,7 @@ const FeedbackForm = ({ recipeId }) => {
     
         try {
             await axios.post(
-                `http://localhost:3000/api/reviews/${recipeId}`,
+                `${API_BASE_URL}/api/reviews/${recipeId}`,
                 { rating, comment: feedback },
                 {
                     headers: {

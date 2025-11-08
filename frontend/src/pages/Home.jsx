@@ -6,6 +6,9 @@ import axios from "axios";
 import Sidebar from "../components/Sidebar";
 import RecipeCard from "../components/RecipeCard";
 
+const BASE_ROUTE = import.meta.env.VITE_BASE_ROUTE || "/";
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 const Home = () => {
   const [recipes, setRecipes] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -18,7 +21,7 @@ const Home = () => {
   useEffect(() => {
     const fetchRecipes = async () => {
       try {
-        const response = await axios.get("http://localhost:3000/api/recipes");
+        const response = await axios.get(`${API_BASE_URL}/api/recipes`);
 
         const formattedRecipes = response.data.map((recipe) => ({
           _id: recipe._id,
@@ -117,7 +120,7 @@ const Home = () => {
           <div className="bg-[url('https://images.pexels.com/photos/9004736/pexels-photo-9004736.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2')] bg-cover bg-center text-white rounded-lg p-10 md:p-16 flex flex-col justify-center">
             <h1 className="text-4xl font-bold mb-4">Discover & Share Amazing Recipes</h1>
             <p className="text-lg mb-6">Join our community of food lovers and explore a world of flavors.</p>
-            <Link to="/add-recipe">
+            <Link to={`${BASE_ROUTE}/add-recipe`}>
               <button className="px-6 py-3 bg-green-500 text-white rounded-lg shadow-lg text-lg font-semibold">
                 Share Your Recipe
               </button>
@@ -135,7 +138,7 @@ const Home = () => {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
             {filteredRecipes.map((recipe) => (
-              <Link to={`/recipe/${recipe._id}`} state={{ recipe }}>
+              <Link to={`${BASE_ROUTE}/recipe/${recipe._id}`} state={{ recipe }}>
               <RecipeCard recipe={recipe} />
             </Link>                                   
             ))}

@@ -3,6 +3,8 @@ import React, { useState } from "react";
 import { Plus, X, Image, Clock, Users, Tags } from "lucide-react";
 import axios from "axios";
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 const AddRecipeForm = ({editingRecipe}) => {
   const [recipe, setRecipe] = useState(
     editingRecipe || {
@@ -96,7 +98,7 @@ const AddRecipeForm = ({editingRecipe}) => {
       if (editingRecipe) {
         // 🔁 Update Recipe
         response = await axios.put(
-          `http://localhost:3000/api/recipes/${editingRecipe._id}`,
+          `${API_BASE_URL}/api/recipes/${editingRecipe._id}`,
           {
             title: recipe.title,
             description: recipe.description,
@@ -121,7 +123,7 @@ const AddRecipeForm = ({editingRecipe}) => {
       } else {
         // Add New Recipe
         response = await axios.post(
-          "http://localhost:3000/api/recipes",
+          `${API_BASE_URL}/api/recipes`,
           {
             title: recipe.title,
             description: recipe.description,
