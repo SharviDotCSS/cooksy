@@ -3,16 +3,13 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";  // Import Axios
+import axios from "axios"; // Import Axios
 
-// Validation Schema
+const BASE_ROUTE = import.meta.env.VITE_BASE_ROUTE || "/";
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
+// Validation Schema (Same rules as Signup for email & password)
 const schema = yup.object().shape({
-    username: yup
-        .string()
-        .matches(/^[a-zA-Z0-9_]+$/, "Only letters, numbers, and underscores are allowed")
-        .min(3, "Username must be at least 3 characters")
-        .max(20, "Username cannot exceed 20 characters")
-        .required("Username is required"),
     email: yup
         .string()
         .email("Invalid email format")
@@ -26,13 +23,9 @@ const schema = yup.object().shape({
         .matches(/\d/, "Must contain at least one number")
         .matches(/[\W_]/, "Must contain at least one special character")
         .required("Password is required"),
-    confirmPassword: yup
-        .string()
-        .oneOf([yup.ref("password"), null], "Passwords must match")
-        .required("Confirm password is required"),
 });
 
-const Signup = () => {
+const Login = () => {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
@@ -48,20 +41,21 @@ const Signup = () => {
 
     const onSubmit = async (data) => {
         setLoading(true);
-        setError(""); 
+        setError("");
 
         try {
-            const response = await axios.post("http://localhost:3000/api/auth/register", {
-                name: data.username,  // Map 'username' to 'name' for backend
+            const response = await axios.post(`${API_BASE_URL}/api/auth/login`, {
                 email: data.email,
                 password: data.password,
             });
 
-            alert("Signup Successful! Please log in.");
-            navigate("/login"); // Redirect to login page
+            alert("Login Successful!");
+            localStorage.setItem("token", response.data.token); // Store JWT Token
+            localStorage.setItem("userId", response.data.userId); // Store User ID
+            navigate(`${BASE_ROUTE}/dashboard`); // Redirect after login
 
         } catch (err) {
-            setError(err.response?.data?.message || "Signup failed. Try again.");
+            setError(err.response?.data?.message || "Login failed. Try again.");
         } finally {
             setLoading(false);
         }
@@ -70,25 +64,11 @@ const Signup = () => {
     return (
         <div className="flex min-h-screen items-center justify-center bg-gray-100">
             <div className="w-full max-w-md bg-white p-8 rounded-lg shadow-lg">
-                <h2 className="text-2xl font-bold text-gray-800 text-center mb-6">Create an Account</h2>
+                <h2 className="text-2xl font-bold text-gray-800 text-center mb-6">Login to Your Account</h2>
 
                 {error && <p className="text-red-500 text-center">{error}</p>}
 
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-                    {/* Username Field */}
-                    <div>
-                        <label className="block text-gray-700 font-medium">Username</label>
-                        <input
-                            type="text"
-                            {...register("username")}
-                            className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:outline-none"
-                            placeholder="Choose a username"
-                        />
-                        {errors.username && (
-                            <p className="text-red-500 text-sm mt-1">{errors.username.message}</p>
-                        )}
-                    </div>
-
                     {/* Email Field */}
                     <div>
                         <label className="block text-gray-700 font-medium">Email</label>
@@ -110,24 +90,10 @@ const Signup = () => {
                             type="password"
                             {...register("password")}
                             className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:outline-none"
-                            placeholder="Create a password"
+                            placeholder="Enter your password"
                         />
                         {errors.password && (
                             <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>
-                        )}
-                    </div>
-
-                    {/* Confirm Password Field */}
-                    <div>
-                        <label className="block text-gray-700 font-medium">Confirm Password</label>
-                        <input
-                            type="password"
-                            {...register("confirmPassword")}
-                            className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:outline-none"
-                            placeholder="Confirm your password"
-                        />
-                        {errors.confirmPassword && (
-                            <p className="text-red-500 text-sm mt-1">{errors.confirmPassword.message}</p>
                         )}
                     </div>
 
@@ -139,17 +105,17 @@ const Signup = () => {
                         }`}
                         disabled={!isValid || loading}
                     >
-                        {loading ? "Signing Up..." : "Sign Up"}
+                        {loading ? "Logging In..." : "Login"}
                     </button>
                 </form>
 
                 <p className="text-center text-gray-600 mt-4">
-                    Already have an account?{" "}
+                    Don't have an account?{" "}
                     <span
                         className="text-green-600 cursor-pointer hover:underline"
-                        onClick={() => navigate("/login")}
+                        onClick={() => navigate(`${BASE_ROUTE}/register`)}
                     >
-                        Log in
+                        Sign up
                     </span>
                 </p>
             </div>
@@ -157,4 +123,4 @@ const Signup = () => {
     );
 };
 
-export default Signup;
+export default Login;

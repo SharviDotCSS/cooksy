@@ -5,6 +5,8 @@ import { ArrowLeft, ShoppingCart, ChefHat, Clock, UtensilsCrossed, Star } from "
 import FeedbackForm from "../components/FeedbackForm";
 import axios from "axios";
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 const RecipeInfo = () => {
     const navigate = useNavigate();
     const location = useLocation();
@@ -15,7 +17,7 @@ const RecipeInfo = () => {
         const fetchReviews = async () => {
             if (recipe?._id) { 
                 try {
-                    const response = await axios.get(`http://localhost:3000/api/reviews/${recipe._id}`);
+                    const response = await axios.get(`${API_BASE_URL}/api/reviews/${recipe._id}`);
                     setReviews(Array.isArray(response.data) ? response.data : []); 
                 } catch (error) {
                     console.error("Error fetching reviews:", error);
