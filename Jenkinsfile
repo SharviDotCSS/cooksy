@@ -53,7 +53,7 @@ spec:
     stages {
 
         /* ---------------------------------------------
-           1️⃣ BUILD BACKEND DOCKER IMAGE
+            BUILD BACKEND DOCKER IMAGE
            --------------------------------------------- */
         stage('Build Backend Docker Image') {
             steps {
@@ -68,7 +68,7 @@ spec:
         }
 
         /* ---------------------------------------------
-           2️⃣ BUILD FRONTEND DOCKER IMAGE
+            BUILD FRONTEND DOCKER IMAGE
            --------------------------------------------- */
         stage('Build Frontend Docker Image') {
             steps {
@@ -83,9 +83,7 @@ spec:
         }
 
         /* ---------------------------------------------
-           3️⃣ SONARQUBE SCAN
-           Your Token = sqp_c534e6eadf952c2e6fa214ffe3f65caf348d1fa7
-           Your Project Key = 2401017_tejasBhos  (as you told)
+            SONARQUBE SCAN
            --------------------------------------------- */
         stage('SonarQube Analysis') {
             steps {
@@ -105,7 +103,7 @@ spec:
         }
 
         /* ---------------------------------------------
-           4️⃣ LOGIN TO NEXUS DOCKER REPO
+            LOGIN TO NEXUS DOCKER REPO
            --------------------------------------------- */
         stage('Login to Docker Registry') {
             steps {
@@ -121,7 +119,7 @@ spec:
         }
 
         /* ---------------------------------------------
-           5️⃣ TAG & PUSH DOCKER IMAGES TO NEXUS
+            TAG & PUSH DOCKER IMAGES TO NEXUS
            Your Nexus repo = 2401011_Cooksy
            --------------------------------------------- */
         stage('Tag & Push Images') {
@@ -141,7 +139,7 @@ spec:
         }
 
         /* ---------------------------------------------
-           6️⃣ KUBERNETES DEPLOYMENT
+            KUBERNETES DEPLOYMENT
            --------------------------------------------- */
         stage('Deploy Cooksy Application') {
             steps {
